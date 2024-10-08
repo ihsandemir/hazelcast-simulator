@@ -6,7 +6,7 @@ locals {
 }
 
 provider "aws" {
-    profile = "oshultseva"
+    profile = "ihsan"
     region = local.settings.region
 }
 

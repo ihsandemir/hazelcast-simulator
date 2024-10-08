@@ -311,6 +311,7 @@ public class HistogramLogProcessor extends Thread {
                 intervalHistogram.getTotalCount(),
                 intervalHistogram.getValueAtPercentile(50.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(90.0) / config.outputValueUnitRatio,
+                intervalHistogram.getValueAtPercentile(95.0) / config.outputValueUnitRatio,
                 intervalHistogram.getMaxValue() / config.outputValueUnitRatio,
                 // values recorded from the beginning until now
                 accumulatedRegularHistogram.getTotalCount(),
@@ -350,9 +351,9 @@ public class HistogramLogProcessor extends Thread {
 
     protected String buildLogFormat(boolean cvs) {
         if (cvs) {
-            return "%.3f,%d,%.3f,%.3f,%.3f,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n";
+            return "%.3f,%d,%.3f,%.3f,%.3f,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n";
         } else {
-            return "%4.3f: I:%d ( %7.3f %7.3f %7.3f ) T:%d ( %7.3f %7.3f %7.3f %7.3f %7.3f %7.3f )\n";
+            return "%4.3f: I:%d ( %7.3f %7.3f %7.3f ) T:%d ( %7.3f %7.3f %7.3f %7.3f %7.3f %7.3f %7.3f )\n";
         }
     }
 

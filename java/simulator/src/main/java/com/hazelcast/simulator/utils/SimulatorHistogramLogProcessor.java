@@ -43,6 +43,7 @@ public class SimulatorHistogramLogProcessor extends HistogramLogProcessor {
                 intervalHistogram.getValueAtPercentile(50.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(75.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(90.0) / config.outputValueUnitRatio,
+                intervalHistogram.getValueAtPercentile(95.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(99.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(99.9) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(99.99) / config.outputValueUnitRatio,
@@ -87,6 +88,7 @@ public class SimulatorHistogramLogProcessor extends HistogramLogProcessor {
                 intervalHistogram.getValueAtPercentile(50.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(75) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(90.0) / config.outputValueUnitRatio,
+                intervalHistogram.getValueAtPercentile(95.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(99.0) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(99.9) / config.outputValueUnitRatio,
                 intervalHistogram.getValueAtPercentile(99.99) / config.outputValueUnitRatio,
@@ -124,6 +126,7 @@ public class SimulatorHistogramLogProcessor extends HistogramLogProcessor {
                     + "\"Int_50%\","
                     + "\"Int_75%\","
                     + "\"Int_90%\","
+                    + "\"Int_95%\","
                     + "\"Int_99%\","
                     + "\"Int_99.9%\","
                     + "\"Int_99.99%\","
@@ -150,7 +153,7 @@ public class SimulatorHistogramLogProcessor extends HistogramLogProcessor {
                     ;
         } else {
             return "Time: StartTime: IntervalPercentiles:count "
-                    + "( 25% 50% 75% 90% 99.9% 99.99% 99.999% Min Max Mean Std-Deviation Throughput) "
+                    + "( 25% 50% 75% 90% 95% 99.9% 99.99% 99.999% Min Max Mean Std-Deviation Throughput) "
                     + "TotalPercentiles:count "
                     + "( 25% 50% 75% 90% 99% 99.9% 99.99% 99.9% Min Max Mean Std-Deviation Throughput)";
         }
@@ -165,6 +168,7 @@ public class SimulatorHistogramLogProcessor extends HistogramLogProcessor {
                     + "%.3f," //int 50%
                     + "%.3f," //int 75%
                     + "%.3f," //int 90%
+                    + "%.3f," //int 95%
                     + "%.3f," //int 99%
                     + "%.3f," //int 99.9%
                     + "%.3f," //int 99.99%
@@ -199,6 +203,7 @@ public class SimulatorHistogramLogProcessor extends HistogramLogProcessor {
                     + "%7.3f " //int 50%
                     + "%7.3f " //int 75%
                     + "%7.3f " //int 90%
+                    + "%7.3f " //int 95%
                     + "%7.3f " //int 99%
                     + "%7.3f " //int 99.9%
                     + "%7.3f " //int 99.99%

@@ -17,6 +17,7 @@ import com.hazelcast.vector.SearchResults;
 import com.hazelcast.vector.VectorCollection;
 import com.hazelcast.vector.VectorDocument;
 import com.hazelcast.vector.VectorValues;
+import com.hazelcast.vector.impl.Hints;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
     public String workingDirectory;
 
     // common parameters
-    public int numberOfSearchIterations = Integer.MAX_VALUE;
+    //public int numberOfSearchIterations = Integer.MAX_VALUE;
 
     public int loadFirst = Integer.MAX_VALUE;
 
@@ -57,6 +58,8 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
     // search parameters
 
     public int limit;
+
+    public int latencyTargetChangeAfterMs = 60000;
 
     // inner test parameters
 
@@ -76,7 +79,6 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
 
     private long indexBuildTime = 0;
 
-
     @Setup
     public void setup() {
         scoreMetrics.setName(name);
@@ -85,7 +87,11 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
         int dimension = reader.getDimension();
         assert dimension == reader.getTestDatasetDimension() : "dataset dimension does not correspond to query vector dimension";
         testDataset = reader.getTestDataset();
+/*
+        logger.info("numberOfSearchIterations: {} , testDataset size: {}", numberOfSearchIterations, testDataset.size());
         numberOfSearchIterations = Math.min(numberOfSearchIterations, testDataset.size());
+        logger.info("Decided to use numberOfSearchIterations as {}", numberOfSearchIterations);
+*/
 
         logger.info("Vector collection name: {}", name);
         logger.info("Use normalize: {}", normalize);
@@ -148,22 +154,39 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
         logger.info("Collection dimension: {}", reader.getDimension());
         logger.info("Cleanup time (min): {}", MILLISECONDS.toMinutes(cleanupTimer));
         logger.info("Index build time (min): {}", MILLISECONDS.toMinutes(indexBuildTime));
+
     }
 
     @TimeStep()
     public void search(ThreadState state) {
+        //var iteration = state.getRandomIndex(testDataset.size());
         var iteration = state.getAndIncrementIteration();
-        if (iteration >= numberOfSearchIterations) {
+/*
+        if (iteration >= 12 * numberOfSearchIterations) {
+            logger.info("Stopping test context since the iteration count of " + iteration +
+                    " is reached. numberOfSearchIterations: " + numberOfSearchIterations);
             testContext.stop();
             return;
         }
+*/
+        if (state.getLastIncrementTimeDiff() >= latencyTargetChangeAfterMs) {
+            // change latencyTarget
+             state.incrementLatencyTargetInMs(5);
+            logger.info("Latency target in msec changed to {}", state.getLatencyTargetInMs());
+        }
+
+        iteration = iteration % testDataset.size();
+
         var vector = testDataset.getSearchVector(iteration);
-        SearchOptions options = new SearchOptionsBuilder().includeValue().includeVectors().limit(limit).build();
+        SearchOptions options =
+                new SearchOptionsBuilder().includeValue().limit(limit).hint(Hints.LATENCY_TARGET,
+                        state.getLatencyTargetInMs()).build();
         var result = collection.searchAsync(
                 VectorValues.of(vector),
                 options
         ).toCompletableFuture().join();
-        searchResults.add(new TestSearchResult(iteration, vector, result));
+        //TestSearchResult searchResult = new TestSearchResult(iteration, vector, result);
+        //searchResults.add(searchResult);
     }
 
     @AfterRun
@@ -177,6 +200,7 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
 
         writeAllSearchResultsToFile("precision_" + name + ".out");
         appendStatisticsToFile();
+/*
         logger.info("Results for {}", name);
         logger.info("Min score: {}", scoreMetrics.getMin());
         logger.info("Max score: {}", scoreMetrics.getMax());
@@ -185,16 +209,40 @@ public class VectorCollectionSearchDatasetTest extends HazelcastTest {
         logger.info("10pt: {}", scoreMetrics.getPercentile(10));
         logger.info("The percentage of results with precision lower than 98%: {}", scoreMetrics.getPercentLowerThen(98));
         logger.info("The percentage of results with precision lower than 99%: {}", scoreMetrics.getPercentLowerThen(99));
+*/
     }
 
     public static class ThreadState extends BaseThreadState {
 
         private int iteration = 0;
+        private int latencyTargetInMs = 5;
+        private long lastIncrementTime = System.currentTimeMillis();
 
         public int getAndIncrementIteration() {
             var it = iteration;
             iteration++;
             return it;
+        }
+
+        public int getRandomIndex(int dataSetSize) {
+            return Math.abs(randomInt()) % dataSetSize;
+        }
+
+        public int getLatencyTargetInMs() {
+            return latencyTargetInMs;
+        }
+
+        public void incrementLatencyTargetInMs(int incrementMs) {
+            this.latencyTargetInMs += incrementMs;
+            this.lastIncrementTime = System.currentTimeMillis();
+        }
+
+        public void setLastIncrementTime(long lastIncrementTime) {
+            this.lastIncrementTime = lastIncrementTime;
+        }
+
+        public long getLastIncrementTimeDiff() {
+            return System.currentTimeMillis() - lastIncrementTime;
         }
     }
 

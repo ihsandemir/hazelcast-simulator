@@ -22,11 +22,11 @@
     <properties>
         <property name="hazelcast.phone.home.enabled">false</property>
         <property name="hazelcast.logging.type">log4j2</property>
-        <property name="hazelcast.partition.count">16</property>
+        <property name="hazelcast.partition.count">32</property>
         <!-- <property name="hazelcast.operation.thread.count">8</property> -->
     </properties>
 
-    <!--LICENSE-KEY-->
+    <license-key>PUT HAZELCAST LICENSE KEY HERE</license-key>
 
 <!--    <vector-collection name="collection-1">-->
 <!--        <indexes>-->
