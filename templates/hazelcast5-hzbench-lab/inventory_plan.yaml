@@ -1,0 +1,13 @@
+provisioner: lab
+
+bandwidthGbps: 40
+
+nodes:
+    count: 3
+    user: <ssh_username>
+loadgenerators:
+    count: 1
+    user: <ssh_username>
+mc:
+    count: 0
+    user: <ssh_username>

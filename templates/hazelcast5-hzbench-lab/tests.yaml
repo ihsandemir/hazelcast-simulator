@@ -1,0 +1,523 @@
+# =============================================================================
+# hzbench-equivalent tests for Hazelcast Simulator
+# =============================================================================
+# Replicates the hzbench two-phase benchmark suite:
+#   Phase 1: Max throughput (at known optimal thread count from hzbench)
+#   Phase 2: Fixed-rate latency (at 1/5 of max throughput)
+#
+# Instructions:
+#   1. Replace threadCount values with optimal counts from your hzbench runs
+#   2. Replace ratePerSecond values with max_throughput/5 from hzbench runs
+#   3. Adjust duration/warmup to match your hzbench config (default: 15min)
+#
+# Test class: LongByteArrayMapTest (uses Long keys vs hzbench's Integer keys,
+# negligible impact on client performance measurements)
+# =============================================================================
+
+# =============================================================================
+# Phase 1: Max Throughput Tests
+# =============================================================================
+
+# --- PUT 4B ---
+- name: max-throughput-put-4
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 245          # <-- set from hzbench optimal
+      getProb: 0
+      putProb: 1
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 4
+      maxValueLength: 4
+
+# --- PUT 512B ---
+- name: max-throughput-put-512
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 225          # <-- set from hzbench optimal
+      getProb: 0
+      putProb: 1
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 512
+      maxValueLength: 512
+
+# --- PUT 1024B ---
+- name: max-throughput-put-1024
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 570          # <-- set from hzbench optimal
+      getProb: 0
+      putProb: 1
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 1024
+      maxValueLength: 1024
+
+# --- GET 4B ---
+- name: max-throughput-get-4
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 302          # <-- set from hzbench optimal
+      getProb: 1
+      putProb: 0
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 4
+      maxValueLength: 4
+
+# --- GET 512B ---
+- name: max-throughput-get-512
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 345          # <-- set from hzbench optimal
+      getProb: 1
+      putProb: 0
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 512
+      maxValueLength: 512
+
+# --- GET 1024B ---
+- name: max-throughput-get-1024
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 260          # <-- set from hzbench optimal
+      getProb: 1
+      putProb: 0
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 1024
+      maxValueLength: 1024
+
+# =============================================================================
+# Phase 2: Fixed-Rate Latency Tests
+# =============================================================================
+# Set ratePerSecond = max_throughput / 5 from Phase 1 hzbench results.
+# Set threadCount = optimal thread count from hzbench max-throughput run.
+
+# --- PUT 4B Fixed Rate ---
+- name: fixed-rate-put-4
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 122          # <-- set from hzbench optimal
+      ratePerSecond: 26053     # <-- set to max_throughput / 5
+      getProb: 0
+      putProb: 1
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 4
+      maxValueLength: 4
+
+# --- PUT 512B Fixed Rate ---
+- name: fixed-rate-put-512
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 122          # <-- set from hzbench optimal
+      ratePerSecond: 30189     # <-- set to max_throughput / 5
+      getProb: 0
+      putProb: 1
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 512
+      maxValueLength: 512
+
+# --- PUT 1024B Fixed Rate ---
+- name: fixed-rate-put-1024
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 160          # <-- set from hzbench optimal
+      ratePerSecond: 26374     # <-- set to max_throughput / 5
+      getProb: 0
+      putProb: 1
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 1024
+      maxValueLength: 1024
+
+# --- GET 4B Fixed Rate ---
+- name: fixed-rate-get-4
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 142          # <-- set from hzbench optimal
+      ratePerSecond: 40942     # <-- set to max_throughput / 5
+      getProb: 1
+      putProb: 0
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 4
+      maxValueLength: 4
+
+# --- GET 512B Fixed Rate ---
+- name: fixed-rate-get-512
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 130          # <-- set from hzbench optimal
+      ratePerSecond: 42001     # <-- set to max_throughput / 5
+      getProb: 1
+      putProb: 0
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 512
+      maxValueLength: 512
+
+# --- GET 1024B Fixed Rate ---
+- name: fixed-rate-get-1024
+  duration: 900s
+  repetitions: 1
+  clients: 1
+  members: 3
+  driver: hazelcast5
+  version: maven=5.6.0
+  client_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  member_args: >
+    -Xms4g -Xmx4g
+    --add-modules java.se
+    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens java.base/java.lang=ALL-UNNAMED
+    --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+    --add-opens java.management/sun.management=ALL-UNNAMED
+    --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+  loadgenerator_hosts: loadgenerators
+  node_hosts: nodes
+  verify_enabled: False
+  performance_monitor_interval_seconds: 1
+  warmup_seconds: 150
+  cooldown_seconds: 0
+  test:
+    - class: com.hazelcast.simulator.tests.map.LongByteArrayMapTest
+      name: benchmarkMap
+      threadCount: 135          # <-- set from hzbench optimal
+      ratePerSecond: 40918     # <-- set to max_throughput / 5
+      getProb: 1
+      putProb: 0
+      keyDomain: 100_000
+      valueCount: 1
+      minValueLength: 1024
+      maxValueLength: 1024
